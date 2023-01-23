@@ -24,10 +24,14 @@ let object = Object.assign({}, current);
 console.log(this.newAlbums);
 },
 count(){
+    this.counter = 0
 for(let i = 0; i< this.newAlbums.length; i++){
     if(this.newAlbums[i].active == true){
         this.counter++
     }
+}
+for(let k=0;k<this.newAlbums.length;k++){
+    this.newAlbums[k].active = false
 }
 },
     },
