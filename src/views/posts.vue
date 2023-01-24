@@ -26,28 +26,59 @@ methods:{
         this.title = object.title
         this.body = object.body
         this.id= object.id
+
     },
     delet(object){
         let deleteObject = this.tableData.findIndex((ell)=> ell.id === object.id)
         console.log(deleteObject)
         this.tableData.splice(deleteObject, 1);
+      fetch( 'https://jsonplaceholder.typicode.com/posts/' + object.id, {
+        method: 'DELETE',
+      } ).then((res)=>{
+        console.log(res)
+      }).catch((e)=>{
+        console.log(e)
+      })
+    },
+  addItem(){
+    fetch( 'https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      body: JSON.stringify( this.form )
+    } )
+        .then(( response )=>{
+          if( response.status != 201 ){
+            this.fetchError = response.status;
+          }else{
+            response.json().then( function( data ){
+              this.fetchResponse = data;
+            }.bind(this));
+          }
+      })
     },
     Change(){
 let newObject= this.tableData.find((ell=>ell.id == this.id))
 newObject.title = this.title
 newObject.body = this.body
-this.title = ''
-this.body = ''
 this.isModalVisible= false
-
-    }
-},
-mounted(){
+      fetch( 'https://jsonplaceholder.typicode.com/posts/' + this.id, {
+        method: 'PUT',
+        body: JSON.stringify({title:this.title,body:this.body})
+      } ).then((res)=>{
+        console.log(res)
+      }).catch((e)=>{
+        console.log(e)
+      })
+    },
+  fetchTable(){
     fetch('https://jsonplaceholder.typicode.com/posts')
-          .then(response => response.json())
-          .then((json) =>{
-            this.tableData = json
-       })
+        .then(response => response.json())
+        .then((json) =>{
+          this.tableData = json
+        })
+  }
+},
+ mounted(){
+  this.fetchTable()
 }
 }
 </script>

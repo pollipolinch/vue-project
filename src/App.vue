@@ -14,11 +14,26 @@ export default{
   name: 'App',
 data(){
   return{
-    name: '',
-    password: '',
+    name: 'Sara',
+    password: 'password124',
     visible: false,
   }
 },
+  watch:{
+    name:{
+      handler(newVal,oldValue){
+        fetch(`https://jsonplaceholder.typicode.com/albums?term=${newVal}`)
+            .then(response => response.json())
+            .then((json) =>{
+              this.newAlbums = json.map(function(current) {
+                let object = Object.assign({}, current);
+                object.active = false;
+                return object;
+              })
+            })
+      }
+    }
+  },
 methods:{
   submit(){
     if(this.name === 'Sara' && this.password === 'password124'){
