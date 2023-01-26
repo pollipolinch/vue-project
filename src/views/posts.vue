@@ -37,12 +37,13 @@ methods:{
         this.title = object.title
         this.body = object.body
         this.id= object.id
+
     },
     delet(object){
         let deleteObject = this.tableData.findIndex((ell)=> ell.id === object.id)
         console.log(deleteObject)
         this.tableData.splice(deleteObject, 1);
-        fetch( 'https://jsonplaceholder.typicode.com/posts/' + object.id, {
+      fetch( 'https://jsonplaceholder.typicode.com/posts/' + object.id, {
         method: 'DELETE',
       } ).then((res)=>{
         console.log(res)

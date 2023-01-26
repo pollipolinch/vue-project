@@ -19,7 +19,7 @@ data(){
     visible: false,
   }
 },
-watch:{
+  watch:{
     name:{
       handler(newVal,oldValue){
         fetch(`https://jsonplaceholder.typicode.com/albums?term=${newVal}`)
