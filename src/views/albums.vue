@@ -1,9 +1,10 @@
 <template>
     <h1>Выбрано элементов: {{ counter }}</h1><button @click="count">Посчитать</button>
     <div @click="sortAlbums"> сделать сортировку</div>
-    <select>
+    <select v-model="activePoint">
+        <option value="">--Please choose an option--</option>
         <option value="inactive">inactive</option>
-        <option @click="activeButton" value="active">active</option>
+        <option value="active">active</option>
       </select>
     <div v-for="ell of newAlbums">
     <input v-model="ell.active" type="checkbox"> {{ ell.id }} {{ ell.title }}</div>
@@ -16,13 +17,22 @@ export default{
           albums:[],
           counter: 0,
           newAlbums:[],
+          activePoint:''
     
         }
     },
+    watch:{
+        activePoint(){
+            if(this.activePoint == 'active'){
+                this.$router.push({name:'albums', query:{status:'active'}})
+            console.log(this.activePoint)
+            } else if(this.activePoint == 'inactive'){
+                this.$router.push({name:'albums', query:{status:'inactive'}})
+            console.log(this.activePoint)
+            }
+        }
+    },
     methods:{
-        activeButton(){
-            this.$router.push({name:'albums', query:{status:'active'}})
-        },
         sortAlbums(){
         this.$router.push({name:'albums', query:{sort:'ask'}})
       },
@@ -58,6 +68,11 @@ for(let k=0;k<this.newAlbums.length;k++){
     },
    async mounted(){
       await this.getAlboms()
+      if(this.$route.query.status === 'active'){
+        this.activePoint = 'active'
+      } else if(this.$route.query.status === 'inactive'){
+        this.activePoint = 'inactive'
+      }
     },
    
 }
