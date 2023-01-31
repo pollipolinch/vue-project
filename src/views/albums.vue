@@ -6,21 +6,22 @@
         <option value="inactive">inactive</option>
         <option value="active">active</option>
       </select>
-    <div v-for="ell of newAlbums">
+    <div v-for="ell of getAlbums">
     <input v-model="ell.active" type="checkbox"> {{ ell.id }} {{ ell.title }}</div>
    
 </template>
 <script>
+import {mapActions,mapGetters } from 'vuex'
 export default{
     data(){
         return{
           albums:[],
           counter: 0,
-          newAlbums:[],
           activePoint:''
     
         }
     },
+    computed: mapGetters(['getAlbums']),
     watch:{
         activePoint(){
             if(this.activePoint == 'active'){
@@ -38,36 +39,18 @@ export default{
       },
         count(){
     this.counter = 0
-for(let i = 0; i< this.newAlbums.length; i++){
-    if(this.newAlbums[i].active == true){
+for(let i = 0; i< this.getAlbums.length; i++){
+    if(this.getAlbums[i].active == true){
         this.counter++
     }
 }
-for(let k=0;k<this.newAlbums.length;k++){
-    this.newAlbums[k].active = false
+for(let k=0;k<this.getAlbums.length;k++){
+    this.getAlbums[k].active = false
 }
-},
-        getAlboms(){
-        fetch("https://jsonplaceholder.typicode.com/albums")
-        .then(response => response.json())
-            .then((json) =>{
-              this.newAlbums = json.map(function(current) {
-                let object = Object.assign({}, current);
-                object.active = false;
-                return object;
-            })
-              if(this.$route.query.sort === 'ask'){
-               fetch("https://jsonplaceholder.typicode.com/albums?sort=ask").then((res)=>{
-                 this.newAlbums = res
-               })
-              }else{
-                fetch("https://jsonplaceholder.typicode.com/albums?sort='desk")
-              }
-      })
 }
     },
    async mounted(){
-      await this.getAlboms()
+      await this.$store.dispatch('fetchAlbums')
       if(this.$route.query.status === 'active'){
         this.activePoint = 'active'
       } else if(this.$route.query.status === 'inactive'){

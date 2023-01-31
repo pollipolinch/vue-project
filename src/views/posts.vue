@@ -8,27 +8,30 @@
         <div v-if="isModalVisible" class="modal"><input class="input" v-model="title" type="textarea">
             <input class="input" v-model="body" type="text">
         <button class="button" @click="Change">Изменить</button></div>
-   <Table @delete="delet" @edit="edit" :data="tableData"></Table></div>
+   <Table @delete="delet" @edit="edit" :data="getPosts"></Table></div>
 </template>
 <script>
 import Table from '../components/able.vue'
+import {mapActions,mapGetters } from 'vuex'
 export default{
     components:{
-Table,
+       Table,
     },
-data(){
-return{
-    tableData:[],
+    computed:
+    mapGetters(['getPosts']),
+     data(){
+       return{
     title:'',
     body:'',
     id:'',
     isModalVisible: false,
     isAddVisible: false,
     newObj:{}
-
 }
 },
-methods:{
+methods: mapActions(['fetchTable']),
+methods:
+{
     add(){
         this.isAddVisible=true
     },
@@ -40,9 +43,9 @@ methods:{
 
     },
     delet(object){
-        let deleteObject = this.tableData.findIndex((ell)=> ell.id === object.id)
+        let deleteObject = this.getPosts.findIndex((ell)=> ell.id === object.id)
         console.log(deleteObject)
-        this.tableData.splice(deleteObject, 1);
+        this.getPosts.splice(deleteObject, 1);
       fetch( 'https://jsonplaceholder.typicode.com/posts/' + object.id, {
         method: 'DELETE',
       } ).then((res)=>{
@@ -51,11 +54,12 @@ methods:{
         console.log(e)
       })
     },
+
   addItem(){
-    this.newObj.id = this.tableData.length+1
+    this.newObj.id = this.getPosts.length+1
     this.newObj.title=this.title
     this.newObj.body= this.body
-    this.tableData.push(this.newObj)
+    this.getPosts.push(this.newObj)
     fetch( 'https://jsonplaceholder.typicode.com/posts/', {
         method: 'POST',
         body: JSON.stringify(this.newObj)
@@ -69,8 +73,9 @@ methods:{
     this.body=''
     this.isAddVisible=false
     },
+
     Change(){
-    let newObject= this.tableData.find((ell=>ell.id == this.id))
+    let newObject= this.getPosts.find((ell=>ell.id == this.id))
     newObject.title = this.title
     newObject.body = this.body
     this.title = ''
@@ -85,17 +90,12 @@ methods:{
         console.log(e)
       })
     },
-  fetchTable(){
-    fetch('https://jsonplaceholder.typicode.com/posts')
-    .then(response => response.json())
-        .then((json) =>{
-          this.tableData = json
-        })
-  }
+ 
 },
- mounted(){
-  this.fetchTable()
-    }}
+async mounted(){
+ this.$store.dispatch('fetchTable')
+}
+};
 </script>
 <style>
  .modal{
